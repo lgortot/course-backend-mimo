@@ -1,5 +1,5 @@
 import { NotFoundError } from "../errors/ApiErrors";
-import { IUser } from "../models/IUser";
+import { IUser, UserUpsertDto } from "../models/IUser";
 import { IUserRepository } from "../repositories/IUserRepository";
 
 /**
@@ -41,8 +41,12 @@ export class UserService {
    * 
    * @returns the created domain model User entity.
    */
-  async createUser(user: IUser): Promise<IUser> {
-    return await this.userRepository.create(user);
+  async createUser(user: UserUpsertDto): Promise<IUser> {
+    const userModel: IUser = {
+      id: 0, 
+      username: user.username,
+    };
+    return await this.userRepository.create(userModel);
   }
 
   /**
@@ -54,8 +58,12 @@ export class UserService {
    * 
    * @returns the updated domain model User entity.
    */
-  async updateUser(id: number, user: IUser): Promise<IUser> {
-    const updated = await this.userRepository.update(id, user);
+  async updateUser(id: number, user: UserUpsertDto): Promise<IUser> {
+    const userModel: IUser = {
+      id: 0, 
+      username: user.username,
+    };
+    const updated = await this.userRepository.update(id, userModel);
     if (!updated) {
       throw new NotFoundError(`Failed to update user with ID ${id} because it does not exist.`);
     }

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/UserService";
-import { IUser } from "../models/IUser";
+import { UserUpsertDto, UserUpsertSchema } from "../models/IUser";
 
 /**
  * Represents the controller for handling users route HTTP requests.
@@ -40,6 +40,7 @@ export default class UserController {
       const user = await this.userService.getUserById(id);
       res.json(user);
     } catch (error) {
+      // could handle zod errors here and rethrow uniform API errors to clients for a cleaner api consumption doc.
       next(error);
     }
   };
@@ -52,7 +53,8 @@ export default class UserController {
    */
   createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const user: IUser = req.body;
+      const parsedUser = UserUpsertSchema.parse(req.body);
+      const user: UserUpsertDto = parsedUser;
       const createdUser = await this.userService.createUser(user);
       res.status(201).json(createdUser);
     } catch (error) {
@@ -69,7 +71,8 @@ export default class UserController {
   updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = parseInt(req.params.id);
-      const user: IUser = req.body;
+      const parsedUser = UserUpsertSchema.parse(req.body);
+      const user: UserUpsertDto = parsedUser;
       const updatedUser = await this.userService.updateUser(id, user);
       res.json(updatedUser);
     } catch (error) {
