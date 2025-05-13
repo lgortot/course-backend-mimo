@@ -1,4 +1,5 @@
 import express, { json, Express } from 'express';
+import errorHandlerMiddleware from '../middleware/errorHandlerMiddleware';
 import createUsersRouter from '../routes/userRoutes';
 
 /**
@@ -39,11 +40,19 @@ export default class Server {
   }
 
   /**
+   * Configures error handler middleware.
+   */
+   private setupErrorHandlerMiddleware(): void {
+    this.app.use(errorHandlerMiddleware);
+  }
+
+  /**
    * Initializes server dependencies and starts the server.
    */
   public start(): void {
     this.setupMiddleware();
     this.setupRoutes();
+    this.setupErrorHandlerMiddleware();
     this.app.listen(this.port, () => {
       console.log(`Server is running on port ${this.port}`);
     });

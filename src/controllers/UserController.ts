@@ -1,5 +1,4 @@
-// src/controllers/UserController.ts
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/UserService";
 import { IUser } from "../models/IUser";
 
@@ -20,12 +19,12 @@ export default class UserController {
    * @param req - Express model of HTTP Request.
    * @param res - Express model of HTTP Response.
    */
-  listUsers = async (req: Request, res: Response) => {
+  listUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const users = await this.userService.getAllUsers();
       res.json(users);
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch users." });
+      next(error);
     }
   };
 
@@ -35,14 +34,13 @@ export default class UserController {
    * @param req - Express model of HTTP Request.
    * @param res - Express model of HTTP Response.
    */
-  getUserById = async (req: Request, res: Response) => {
+  getUserById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = parseInt(req.params.id);
       const user = await this.userService.getUserById(id);
       res.json(user);
     } catch (error) {
-        if (error instanceof Error)
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   };
 
@@ -52,13 +50,13 @@ export default class UserController {
    * @param req - Express model of HTTP Request. Contains DTO model with User info.
    * @param res - Express model of HTTP Response.
    */
-  createUser = async (req: Request, res: Response) => {
+  createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user: IUser = req.body;
       const createdUser = await this.userService.createUser(user);
       res.status(201).json(createdUser);
     } catch (error) {
-      res.status(500).json({ error: "Failed to create user." });
+      next(error);
     }
   };
 
@@ -68,15 +66,14 @@ export default class UserController {
    * @param req - Express model of HTTP Request. Contains DTO model with User info.
    * @param res - Express model of HTTP Response.
    */
-  updateUser = async (req: Request, res: Response) => {
+  updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = parseInt(req.params.id);
       const user: IUser = req.body;
       const updatedUser = await this.userService.updateUser(id, user);
       res.json(updatedUser);
     } catch (error) {
-        if (error instanceof Error)
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   };
 
@@ -86,14 +83,13 @@ export default class UserController {
    * @param req - Express model of HTTP Request.
    * @param res - Express model of HTTP Response.
    */
-  deleteUser = async (req: Request, res: Response) => {
+  deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = parseInt(req.params.id);
       await this.userService.deleteUser(id);
       res.sendStatus(204);
     } catch (error) {
-        if (error instanceof Error)
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   };
 }

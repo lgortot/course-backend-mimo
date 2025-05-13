@@ -1,5 +1,5 @@
-import { dbContext } from './dbContext'; // Adjust the import to where your Drizzle database instance is located
-import { Course, Chapter, Lesson, User, Achievement, User_Lesson_Progress, User_Achievement } from './schemaTables'; // Adjust the import path
+import { dbContext } from './dbContext';
+import { Course, Chapter, Lesson, User, Achievement, User_Lesson_Progress, User_Achievement } from './schemaTables';
 
 async function seed() {
   try {

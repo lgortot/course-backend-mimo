@@ -4,16 +4,30 @@ import { eq } from "drizzle-orm";
 import { IUser } from "../models/IUser";
 import { NewUserRow, UserRow } from "../db/dbTypes";
 import { IUserRepository } from "./IUserRepository";
+import { InternalServerError } from "../errors/ApiErrors";
 
+/**
+ * Drizzle ORM + SQLite implementation of the User resource Repository.
+ */
 export class DrizzleUserRepository implements IUserRepository {
   async getAll(): Promise<IUser[]> {
-    const rows = await dbContext.select().from(User);
-    return rows.map(this.toDomain);
+    try {
+      const rows = await dbContext.select().from(User);
+      return rows.map(this.toDomain);
+    } catch (error) {
+      console.error("Error:", error);
+      throw new InternalServerError("Failed to connect to database.");
+    }
   }
 
   async getById(id: number): Promise<IUser | null> {
-    const rows = await dbContext.select().from(User).where(eq(User.ID, id));
-    return rows[0] ? this.toDomain(rows[0]) : null;
+    try {
+      const rows = await dbContext.select().from(User).where(eq(User.ID, id));
+      return rows[0] ? this.toDomain(rows[0]) : null;
+    } catch (error) {
+      console.error("Error:", error);
+      throw new InternalServerError("Failed to connect to database.");
+    }
   }
 
   async create(user: IUser): Promise<IUser> {
@@ -21,9 +35,16 @@ export class DrizzleUserRepository implements IUserRepository {
       Username: user.username,
     };
 
-    const [inserted] = await dbContext.insert(User).values(newUser).returning();
-
-    return this.toDomain(inserted);
+    try {
+      const [inserted] = await dbContext
+        .insert(User)
+        .values(newUser)
+        .returning();
+      return this.toDomain(inserted);
+    } catch (error) {
+      console.error("Error:", error);
+      throw new InternalServerError("Failed to connect to database.");
+    }
   }
 
   async update(id: number, user: IUser): Promise<IUser | null> {
@@ -31,23 +52,32 @@ export class DrizzleUserRepository implements IUserRepository {
       Username: user.username,
     };
 
-    const [updated] = await dbContext
-      .update(User)
-      .set(updatedUser)
-      .where(eq(User.ID, id))
-      .returning();
-
-    return updated ? this.toDomain(updated) : null;
+    try {
+      const [updated] = await dbContext
+        .update(User)
+        .set(updatedUser)
+        .where(eq(User.ID, id))
+        .returning();
+      return updated ? this.toDomain(updated) : null;
+    } catch (error) {
+      console.error("Error:", error);
+      throw new InternalServerError("Failed to connect to database.");
+    }
   }
 
   async delete(id: number): Promise<boolean> {
-    const deleted = await dbContext.delete(User).where(eq(User.ID, id));
-    return deleted.changes > 0;
+    try {
+      const deleted = await dbContext.delete(User).where(eq(User.ID, id));
+      return deleted.changes > 0;
+    } catch (error) {
+      console.error("Error:", error);
+      throw new InternalServerError("Failed to connect to database.");
+    }
   }
 
   /**
    * Transforms Database User model to domain model.
-   * 
+   *
    * @param row - Model of User row data from database.
    * @returns IUser domain model of User row data from database.
    */

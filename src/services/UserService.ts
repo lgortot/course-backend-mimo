@@ -1,4 +1,4 @@
-// src/services/UserService.ts
+import { NotFoundError } from "../errors/ApiErrors";
 import { IUser } from "../models/IUser";
 import { IUserRepository } from "../repositories/IUserRepository";
 
@@ -29,7 +29,7 @@ export class UserService {
   async getUserById(id: number): Promise<IUser> {
     const user = await this.userRepository.getById(id);
     if (!user) {
-      throw new Error(`User with ID ${id} not found.`);
+      throw new NotFoundError(`User with ID ${id} not found.`);
     }
     return user;
   }
@@ -57,7 +57,7 @@ export class UserService {
   async updateUser(id: number, user: IUser): Promise<IUser> {
     const updated = await this.userRepository.update(id, user);
     if (!updated) {
-      throw new Error(`Failed to update user with ID ${id} because it does not exist.`);
+      throw new NotFoundError(`Failed to update user with ID ${id} because it does not exist.`);
     }
     return updated;
   }
@@ -72,7 +72,7 @@ export class UserService {
   async deleteUser(id: number): Promise<void> {
     const success = await this.userRepository.delete(id);
     if (!success) {
-      throw new Error(`User with ID ${id} could not be deleted because it does not exist.`);
+      throw new NotFoundError(`User with ID ${id} could not be deleted because it does not exist.`);
     }
   }
 }

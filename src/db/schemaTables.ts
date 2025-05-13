@@ -29,7 +29,7 @@ import { sqliteTable, text, integer, primaryKey, index, unique } from "drizzle-o
   
   export const User = sqliteTable("User", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
-    Username: text("Username"),
+    Username: text("Username").notNull(),
   });
   
   export const User_Lesson_Progress = sqliteTable(

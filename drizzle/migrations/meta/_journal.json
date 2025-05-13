@@ -15,6 +15,13 @@
       "when": 1747091903235,
       "tag": "0001_FixOrderConstraint",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1747160152818,
+      "tag": "0002_FixUsernameNotNull",
+      "breakpoints": true
     }
   ]
 }
