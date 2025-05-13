@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, primaryKey, index } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, primaryKey, index, unique } from "drizzle-orm/sqlite-core";
   
   // Table schemas
 
@@ -11,15 +11,21 @@ import { sqliteTable, text, integer, primaryKey, index } from "drizzle-orm/sqlit
     ID: integer("ID").primaryKey({ autoIncrement: true }),
     Course_ID: integer("Course_ID").references(() => Course.ID, { onDelete: 'cascade' }),
     Name: text("Name").notNull(),
-    Order_Index: integer("Order_Index").notNull().unique(),
-  });
+    Order_Index: integer("Order_Index").notNull(),
+  },
+  (table) => [
+    unique("unique_chapter_order").on(table.Course_ID, table.Order_Index),
+  ]);
   
   export const Lesson = sqliteTable("Lesson", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
     Chapter_ID: integer("Chapter_ID").references(() => Chapter.ID, { onDelete: 'cascade' }),
     Name: text("Name").notNull(),
-    Order_Index: integer("Order_Index").notNull().unique(),
-  });
+    Order_Index: integer("Order_Index").notNull(),
+  },
+  (table) => [
+    unique("unique_lesson_order").on(table.Chapter_ID, table.Order_Index),
+  ]);
   
   export const User = sqliteTable("User", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),

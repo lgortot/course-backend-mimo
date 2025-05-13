@@ -10,6 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --import=tsx --watch --env-file=.env src/index.ts",
     "db:migrate": "npx drizzle-kit migrate",
+    "db:seed": "node --import=tsx --env-file=.env src/db/seedDatabase.ts",
     "db:studio": "npx drizzle-kit studio",
     "build": "tsc"
   },
