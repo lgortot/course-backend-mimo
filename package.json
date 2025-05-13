@@ -12,6 +12,7 @@
     "db:migrate": "npx drizzle-kit migrate",
     "db:seed": "node --import=tsx --env-file=.env src/db/seedDatabase.ts",
     "db:studio": "npx drizzle-kit studio",
+    "dev:start": "npm run db:migrate && npm run db:seed && npm run dev",
     "build": "tsc"
   },
   "dependencies": {
