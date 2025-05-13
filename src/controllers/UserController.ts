@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/UserService";
 import { UserUpsertDto, UserUpsertSchema } from "../models/IUser";
+import { userLessonUpsertSchema, UserLessonUpsertDto } from "../models/IUserLesson";
 
 /**
  * Represents the controller for handling users route HTTP requests.
@@ -8,16 +9,37 @@ import { UserUpsertDto, UserUpsertSchema } from "../models/IUser";
 export default class UserController {
   /**
    * Default constructor.
-   * 
+   *
    * @param userService - The Service responsible for handling User-related business logic.
    */
   constructor(private readonly userService: UserService) {}
 
   /**
-   * Gets the list of all User resources.
+   * 
+   * Handles lesson finalization logic for user.
    * 
    * @param req - Express model of HTTP Request.
    * @param res - Express model of HTTP Response.
+   * @param next - Express NextFunction used here for delegating errors.
+   */
+  finishLesson = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const parsedUserLessonProgress = userLessonUpsertSchema.parse(req.body);
+      const userLessonParsed: UserLessonUpsertDto = parsedUserLessonProgress;
+      const userLessonProgress = await this.userService.finishLessonForUser(userId, userLessonParsed);
+      res.json(userLessonProgress);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Gets the list of all User resources.
+   *
+   * @param req - Express model of HTTP Request.
+   * @param res - Express model of HTTP Response.
+   * @param next - Express NextFunction used here for delegating errors.
    */
   listUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -30,9 +52,10 @@ export default class UserController {
 
   /**
    * Gets the User resource by id from route.
-   * 
+   *
    * @param req - Express model of HTTP Request.
    * @param res - Express model of HTTP Response.
+   * @param next - Express NextFunction used here for delegating errors.
    */
   getUserById = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -47,9 +70,10 @@ export default class UserController {
 
   /**
    * Creates a new User resource.
-   * 
+   *
    * @param req - Express model of HTTP Request. Contains DTO model with User info.
    * @param res - Express model of HTTP Response.
+   * @param next - Express NextFunction used here for delegating errors.
    */
   createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -64,9 +88,10 @@ export default class UserController {
 
   /**
    * Updates the User resource by id from route.
-   * 
+   *
    * @param req - Express model of HTTP Request. Contains DTO model with User info.
    * @param res - Express model of HTTP Response.
+   * @param next - Express NextFunction used here for delegating errors.
    */
   updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -82,9 +107,10 @@ export default class UserController {
 
   /**
    * Deletes the User resource by id from route.
-   * 
+   *
    * @param req - Express model of HTTP Request.
    * @param res - Express model of HTTP Response.
+   * @param next - Express NextFunction used here for delegating errors.
    */
   deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     try {

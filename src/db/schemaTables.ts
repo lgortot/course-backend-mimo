@@ -19,7 +19,7 @@ import { sqliteTable, text, integer, primaryKey, index, unique } from "drizzle-o
   
   export const Lesson = sqliteTable("Lesson", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
-    Chapter_ID: integer("Chapter_ID").references(() => Chapter.ID, { onDelete: 'cascade' }),
+    Chapter_ID: integer("Chapter_ID").references(() => Chapter.ID, { onDelete: 'cascade' }).notNull(),
     Name: text("Name").notNull(),
     Order_Index: integer("Order_Index").notNull(),
   },
@@ -36,10 +36,10 @@ import { sqliteTable, text, integer, primaryKey, index, unique } from "drizzle-o
     "User_Lesson_Progress",
     {
       ID: integer("ID").primaryKey({ autoIncrement: true }),
-      User_ID: integer("User_ID").references(() => User.ID, { onDelete: 'cascade' }), // will this delete user when i delete sqlite table?
-      Lesson_ID: integer("Lesson_ID").references(() => Lesson.ID, { onDelete: 'cascade' }),
-      Started_At: integer("Started_At", { mode: 'timestamp' }),
-      Completed_At: integer("Completed_At", { mode: 'timestamp' }),
+      User_ID: integer("User_ID").references(() => User.ID, { onDelete: 'cascade' }).notNull(),
+      Lesson_ID: integer("Lesson_ID").references(() => Lesson.ID, { onDelete: 'cascade' }).notNull(),
+      Started_At: integer("Started_At", { mode: 'timestamp' }).notNull(),
+      Completed_At: integer("Completed_At", { mode: 'timestamp' }).notNull(),
     },
     (table) => [
       index("idx_user_lesson_progress_user_lesson").on(table.User_ID, table.Lesson_ID),
