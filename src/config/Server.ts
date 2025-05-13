@@ -1,4 +1,5 @@
 import express, { json, Express } from 'express';
+import createUsersRouter from '../routes/userRoutes';
 
 /**
  * Represents the core HTTP server application.
@@ -31,6 +32,7 @@ export default class Server {
    * Configures server routes.
    */
   private setupRoutes(): void {
+    this.app.use('/users', createUsersRouter());
     this.app.get("/", (req, res) => {
       res.send("Hello world!");
     });
