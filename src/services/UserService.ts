@@ -45,9 +45,12 @@ export class UserService {
       Completed_At: userLesson.completed_at,
     };
 
-    return await this.lessonRepository.createUserLessonProgress(
-      userLessonModel
-    );
+    const { inserted, chapter_Id, lessonCount } =
+      await this.lessonRepository.createUserLessonProgress(userLessonModel);
+
+    console.log(`User ${userId} has now completed ${lessonCount} lessons under chapter ${chapter_Id}.`);
+
+    return inserted;
   }
 
   /**

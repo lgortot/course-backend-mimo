@@ -15,6 +15,7 @@ import { sqliteTable, text, integer, primaryKey, index, unique } from "drizzle-o
   },
   (table) => [
     unique("unique_chapter_order").on(table.Course_ID, table.Order_Index),
+    index('idx_chapter_course_id').on(table.Course_ID),
   ]);
   
   export const Lesson = sqliteTable("Lesson", {
@@ -25,6 +26,7 @@ import { sqliteTable, text, integer, primaryKey, index, unique } from "drizzle-o
   },
   (table) => [
     unique("unique_lesson_order").on(table.Chapter_ID, table.Order_Index),
+    index('idx_lesson_chapter_id').on(table.Chapter_ID),
   ]);
   
   export const User = sqliteTable("User", {
@@ -70,8 +72,8 @@ import { sqliteTable, text, integer, primaryKey, index, unique } from "drizzle-o
   export const User_Chapter_Progress = sqliteTable(
     "User_Chapter_Progress",
     {
-      User_ID: integer("User_ID").references(() => User.ID, { onDelete: 'cascade' }),
-      Chapter_ID: integer("Chapter_ID").references(() => Chapter.ID, { onDelete: 'cascade' }),
+      User_ID: integer("User_ID").references(() => User.ID, { onDelete: 'cascade' }).notNull(),
+      Chapter_ID: integer("Chapter_ID").references(() => Chapter.ID, { onDelete: 'cascade' }).notNull(),
     },
     (table) => [
       primaryKey({ columns: [table.User_ID, table.Chapter_ID] }),
@@ -81,8 +83,8 @@ import { sqliteTable, text, integer, primaryKey, index, unique } from "drizzle-o
   export const User_Course_Progress = sqliteTable(
     "User_Course_Progress",
     {
-      User_ID: integer("User_ID").references(() => User.ID, { onDelete: 'cascade' }),
-      Course_ID: integer("Course_ID").references(() => Course.ID, { onDelete: 'cascade' }),
+      User_ID: integer("User_ID").references(() => User.ID, { onDelete: 'cascade' }).notNull(),
+      Course_ID: integer("Course_ID").references(() => Course.ID, { onDelete: 'cascade' }).notNull(),
     },
     (table) => [
       primaryKey({ columns: [table.User_ID, table.Course_ID] }),

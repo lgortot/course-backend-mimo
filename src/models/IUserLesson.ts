@@ -12,6 +12,15 @@ export interface IUserLesson {
 }
 
 /**
+ * Domain User-Lesson progress model containing total lessons user has completed under a chapter. (TODO: Reuse medamodel for counts)
+ */
+export interface IUserLessonWithCount {
+  inserted: IUserLesson,
+  chapter_Id: number,
+  lessonCount: number
+}
+
+/**
  * Zod schema for User-Lesson progress upsert operations.
  * - `username` is mandatory and must be non-empty, hence "min 1"
  */

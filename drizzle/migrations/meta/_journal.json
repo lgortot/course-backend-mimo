@@ -29,6 +29,20 @@
       "when": 1747177844169,
       "tag": "0003_FixNotNullConstraints",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1747258981157,
+      "tag": "0004_FixNotNullConstraintsOnProgressTables",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1747259193776,
+      "tag": "0005_IndexingOnLessonChapterCourse",
+      "breakpoints": true
     }
   ]
 }
