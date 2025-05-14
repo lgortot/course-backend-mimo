@@ -1,3 +1,7 @@
+import {
+  ICourseChapterCount,
+  IChapterLessonCount,
+} from "../models/IMetaModels";
 import { ILesson } from "../models/ILesson";
 import { IUserLesson } from "../models/IUserLesson";
 
@@ -20,4 +24,16 @@ export interface ILessonRepository {
    * @param id - The ID of the lesson to retrieve.
    */
   getById(id: number): Promise<ILesson | null>;
+
+  /**
+   * Retrieves a list of chapters count by course ID models.
+   *
+   */
+  getChaptersCountByCourseIds(): Promise<ICourseChapterCount[] | null>;
+
+  /**
+   * Retrieves a list of lessons count by chapter ID models.
+   *
+   */
+  getLessonsCountByChapterIds(): Promise<IChapterLessonCount[] | null>;
 }
