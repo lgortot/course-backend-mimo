@@ -43,6 +43,13 @@
       "when": 1747259193776,
       "tag": "0005_IndexingOnLessonChapterCourse",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1747275405811,
+      "tag": "0006_AchievementDataNullChecks",
+      "breakpoints": true
     }
   ]
 }

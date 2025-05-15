@@ -1,7 +1,9 @@
 import { InferSelectModel, InferInsertModel } from "drizzle-orm";
 import {
+  Achievement,
   Lesson,
   User,
+  User_Achievement,
   User_Chapter_Progress,
   User_Course_Progress,
   User_Lesson_Progress,
@@ -43,3 +45,19 @@ export type NewUserCourseRow = InferInsertModel<typeof User_Course_Progress>;
  * Drizzle User_Course_Progress data model for SELECT operations.
  */
 export type UserCourseRow = InferSelectModel<typeof User_Course_Progress>;
+/**
+ * Drizzle User_Achievement data model for INSERT operations.
+ */
+export type NewUserAchievementRow = InferInsertModel<typeof User_Achievement>;
+/**
+ * Drizzle User_Achievement data model for SELECT operations.
+ */
+export type UserAchievementRow = InferSelectModel<typeof User_Achievement>;
+/**
+ * Drizzle Achievement data model for INSERT operations.
+ */
+export type NewAchievementRow = InferInsertModel<typeof Achievement>;
+/**
+ * Drizzle Achievement data model for SELECT operations.
+ */
+export type AchievementRow = InferSelectModel<typeof Achievement>;

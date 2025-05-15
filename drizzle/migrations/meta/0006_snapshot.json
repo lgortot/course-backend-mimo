@@ -1,0 +1,534 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "0ed53aa0-942c-4362-9821-db60a835858d",
+  "prevId": "f1dabd5e-2058-41d9-b6bf-b3b4fb4197d2",
+  "tables": {
+    "Achievement": {
+      "name": "Achievement",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "Name": {
+          "name": "Name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "Type": {
+          "name": "Type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "Threshold": {
+          "name": "Threshold",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "Course_ID": {
+          "name": "Course_ID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Achievement_Course_ID_Course_ID_fk": {
+          "name": "Achievement_Course_ID_Course_ID_fk",
+          "tableFrom": "Achievement",
+          "tableTo": "Course",
+          "columnsFrom": [
+            "Course_ID"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "Chapter": {
+      "name": "Chapter",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "Course_ID": {
+          "name": "Course_ID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "Name": {
+          "name": "Name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "Order_Index": {
+          "name": "Order_Index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "idx_chapter_course_id": {
+          "name": "idx_chapter_course_id",
+          "columns": [
+            "Course_ID"
+          ],
+          "isUnique": false
+        },
+        "unique_chapter_order": {
+          "name": "unique_chapter_order",
+          "columns": [
+            "Course_ID",
+            "Order_Index"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "Chapter_Course_ID_Course_ID_fk": {
+          "name": "Chapter_Course_ID_Course_ID_fk",
+          "tableFrom": "Chapter",
+          "tableTo": "Course",
+          "columnsFrom": [
+            "Course_ID"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "Course": {
+      "name": "Course",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "Name": {
+          "name": "Name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "Lesson": {
+      "name": "Lesson",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "Chapter_ID": {
+          "name": "Chapter_ID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "Name": {
+          "name": "Name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "Order_Index": {
+          "name": "Order_Index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "idx_lesson_chapter_id": {
+          "name": "idx_lesson_chapter_id",
+          "columns": [
+            "Chapter_ID"
+          ],
+          "isUnique": false
+        },
+        "unique_lesson_order": {
+          "name": "unique_lesson_order",
+          "columns": [
+            "Chapter_ID",
+            "Order_Index"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "Lesson_Chapter_ID_Chapter_ID_fk": {
+          "name": "Lesson_Chapter_ID_Chapter_ID_fk",
+          "tableFrom": "Lesson",
+          "tableTo": "Chapter",
+          "columnsFrom": [
+            "Chapter_ID"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "User": {
+      "name": "User",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "Username": {
+          "name": "Username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "User_Achievement": {
+      "name": "User_Achievement",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "User_ID": {
+          "name": "User_ID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "Achievement_ID": {
+          "name": "Achievement_ID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "Earned_At": {
+          "name": "Earned_At",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "idx_user_achievement_user_achievement": {
+          "name": "idx_user_achievement_user_achievement",
+          "columns": [
+            "User_ID",
+            "Achievement_ID"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "User_Achievement_User_ID_User_ID_fk": {
+          "name": "User_Achievement_User_ID_User_ID_fk",
+          "tableFrom": "User_Achievement",
+          "tableTo": "User",
+          "columnsFrom": [
+            "User_ID"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "User_Achievement_Achievement_ID_Achievement_ID_fk": {
+          "name": "User_Achievement_Achievement_ID_Achievement_ID_fk",
+          "tableFrom": "User_Achievement",
+          "tableTo": "Achievement",
+          "columnsFrom": [
+            "Achievement_ID"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "User_Chapter_Progress": {
+      "name": "User_Chapter_Progress",
+      "columns": {
+        "User_ID": {
+          "name": "User_ID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "Chapter_ID": {
+          "name": "Chapter_ID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "User_Chapter_Progress_User_ID_User_ID_fk": {
+          "name": "User_Chapter_Progress_User_ID_User_ID_fk",
+          "tableFrom": "User_Chapter_Progress",
+          "tableTo": "User",
+          "columnsFrom": [
+            "User_ID"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "User_Chapter_Progress_Chapter_ID_Chapter_ID_fk": {
+          "name": "User_Chapter_Progress_Chapter_ID_Chapter_ID_fk",
+          "tableFrom": "User_Chapter_Progress",
+          "tableTo": "Chapter",
+          "columnsFrom": [
+            "Chapter_ID"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "User_Chapter_Progress_User_ID_Chapter_ID_pk": {
+          "columns": [
+            "User_ID",
+            "Chapter_ID"
+          ],
+          "name": "User_Chapter_Progress_User_ID_Chapter_ID_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "User_Course_Progress": {
+      "name": "User_Course_Progress",
+      "columns": {
+        "User_ID": {
+          "name": "User_ID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "Course_ID": {
+          "name": "Course_ID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "User_Course_Progress_User_ID_User_ID_fk": {
+          "name": "User_Course_Progress_User_ID_User_ID_fk",
+          "tableFrom": "User_Course_Progress",
+          "tableTo": "User",
+          "columnsFrom": [
+            "User_ID"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "User_Course_Progress_Course_ID_Course_ID_fk": {
+          "name": "User_Course_Progress_Course_ID_Course_ID_fk",
+          "tableFrom": "User_Course_Progress",
+          "tableTo": "Course",
+          "columnsFrom": [
+            "Course_ID"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "User_Course_Progress_User_ID_Course_ID_pk": {
+          "columns": [
+            "User_ID",
+            "Course_ID"
+          ],
+          "name": "User_Course_Progress_User_ID_Course_ID_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "User_Lesson_Progress": {
+      "name": "User_Lesson_Progress",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "User_ID": {
+          "name": "User_ID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "Lesson_ID": {
+          "name": "Lesson_ID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "Started_At": {
+          "name": "Started_At",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "Completed_At": {
+          "name": "Completed_At",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "idx_user_lesson_progress_user_lesson": {
+          "name": "idx_user_lesson_progress_user_lesson",
+          "columns": [
+            "User_ID",
+            "Lesson_ID"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "User_Lesson_Progress_User_ID_User_ID_fk": {
+          "name": "User_Lesson_Progress_User_ID_User_ID_fk",
+          "tableFrom": "User_Lesson_Progress",
+          "tableTo": "User",
+          "columnsFrom": [
+            "User_ID"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "User_Lesson_Progress_Lesson_ID_Lesson_ID_fk": {
+          "name": "User_Lesson_Progress_Lesson_ID_Lesson_ID_fk",
+          "tableFrom": "User_Lesson_Progress",
+          "tableTo": "Lesson",
+          "columnsFrom": [
+            "Lesson_ID"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

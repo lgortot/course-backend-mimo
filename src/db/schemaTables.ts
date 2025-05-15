@@ -52,7 +52,7 @@ import { sqliteTable, text, integer, primaryKey, index, unique } from "drizzle-o
     ID: integer("ID").primaryKey({ autoIncrement: true }),
     Name: text("Name").notNull(),
     Type: text("Type").notNull(),
-    Threshold: integer("Threshold"),
+    Threshold: integer("Threshold").notNull(),
     Course_ID: integer("Course_ID").references(() => Course.ID, { onDelete: 'cascade' }),
   });
   
@@ -61,7 +61,7 @@ import { sqliteTable, text, integer, primaryKey, index, unique } from "drizzle-o
     {
       ID: integer("ID").primaryKey({ autoIncrement: true }),
       User_ID: integer("User_ID").references(() => User.ID, { onDelete: 'cascade' }),
-      Achievement_ID: integer("Achievement_ID").references(() => Achievement.ID, { onDelete: 'cascade' }),
+      Achievement_ID: integer("Achievement_ID").references(() => Achievement.ID, { onDelete: 'cascade' }).notNull(),
       Earned_At: integer("Earned_At", { mode: 'timestamp' }),
     },
     (table) => [
