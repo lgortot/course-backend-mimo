@@ -59,4 +59,18 @@ export interface ILessonRepository {
    *
    */
   getLessonsCountByChapterIds(): Promise<IChapterLessonCount[] | null>;
+
+  /**
+   * Retreives the number of lessons a user has completed.
+   * 
+   * @param userId - The ID of the user.
+   */
+  getCompletedLessonsForUser(userId: number): Promise<number>;
+
+  /**
+   * Retreives the number of chapters a user has completed.
+   * 
+   * @param userId - The ID of the user.
+   */
+  getCompletedChaptersForUser(userId: number): Promise<number>;
 }

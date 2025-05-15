@@ -6,6 +6,11 @@ import { IUserLesson, UserLessonUpsertDto } from "../models/IUserLesson";
 import { IDataCache } from "../cache/IDataCache";
 import { IUserChapter } from "../models/IUserChapter";
 import { IUserCourse } from "../models/IUserCourse";
+import { IAchievementRepository } from "../repositories/IAchievementRepository";
+import {
+  IUserAchievement,
+  UserAchievementDto,
+} from "../models/IUserAchievement";
 
 /**
  * Service layer for handling business logic related to User resource operations.
@@ -15,8 +20,45 @@ export class UserService {
   constructor(
     private readonly userRepository: IUserRepository,
     private readonly lessonRepository: ILessonRepository,
+    private readonly achievementRepository: IAchievementRepository,
     private readonly cache: IDataCache
   ) {}
+
+  /**
+   * Gets all achievements for user.
+   *
+   * @param userId - The ID of the user.
+   * @throws Will throw if no achievements are found in database.
+   * @returns A list of all earned and unearned achievements.
+   */
+  async getAchievementsForUser(userId: number): Promise<UserAchievementDto[]> {
+    const achievements =
+      await this.achievementRepository.getAllUserAchievementProgress(userId);
+    if (!achievements) {
+      throw new NotFoundError(
+        "There are no achievements registered in the database."
+      );
+    }
+
+    const shouldGetLessons = achievements.some(
+      (a) => a.type === "lesson" && a.completed === false
+    );
+
+    const shouldGetChapters = achievements.some(
+      (a) => a.type === "chapter" && a.completed === false
+    );
+
+    const { totalLessons, totalChapters } =
+      await this.prepareUserCompletionData(
+        shouldGetLessons,
+        shouldGetChapters,
+        userId
+      );
+
+    return achievements.map((achievement) =>
+      this.toUserAchievementDto(achievement, totalLessons, totalChapters)
+    );
+  }
 
   /**
    * Finishes a lesson for user.
@@ -170,7 +212,7 @@ export class UserService {
     lessonCount: number
   ): Promise<void> {
     const totalLessonsCount = this.cache.getLessonCountForChapter(chapter_id);
-    
+
     if (totalLessonsCount != lessonCount) return;
 
     const userChapterModel: IUserChapter = {
@@ -197,5 +239,62 @@ export class UserService {
     await this.lessonRepository.createUserCourseProgress(userCourseModel);
 
     console.log(`User ${user_id} has now completed course ${course_id}.`);
+  }
+
+  /**
+   * Prepares the number of completed lessons and chapters for user if requested.
+   *
+   * @param shouldGetLessons - if we should fetch completed lessons count.
+   * @param shouldGetChapters - if we should fetch completed chapters count.
+   * @param userId - userId to fetch data for.
+   * @returns 0 if data not needed, otherwise number of completed resources.
+   */
+  private async prepareUserCompletionData(
+    shouldGetLessons: boolean,
+    shouldGetChapters: boolean,
+    userId: number
+  ): Promise<{ totalLessons: number; totalChapters: number }> {
+    const totalLessons = shouldGetLessons
+      ? await this.lessonRepository.getCompletedLessonsForUser(userId)
+      : 0;
+
+    const totalChapters = shouldGetChapters
+      ? await this.lessonRepository.getCompletedChaptersForUser(userId)
+      : 0;
+    return { totalLessons, totalChapters };
+  }
+
+  /**
+   * Transforms IUserAchievement domain model to UserAchievementDto.
+   *
+   * @param achievement - Domain model representing a user’s progress toward an achievement.
+   * @param totalLessons - Total lessons user has completed.
+   * @param totalChapters - Total chapters user has completed.
+   * @returns DTO model suitable for HTTP response.
+   */
+  private toUserAchievementDto(
+    achievement: IUserAchievement,
+    totalLessons: number,
+    totalChapters: number
+  ): UserAchievementDto {
+    let progress: number;
+
+    if (achievement.completed) {
+      progress = achievement.threshold;
+    } else if (achievement.type === "lesson") {
+      progress = totalLessons;
+    } else if (achievement.type === "chapter") {
+      progress = totalChapters;
+    } else {
+      progress = 0;
+    }
+
+    return {
+      achievement_id: achievement.achievement_id,
+      name: achievement.name,
+      earned_at: achievement.earned_at,
+      completed: achievement.completed,
+      progress,
+    };
   }
 }

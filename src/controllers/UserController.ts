@@ -16,6 +16,24 @@ export default class UserController {
 
   /**
    * 
+   * Gets a list of all achievements for user.
+   * 
+   * @param req - Express model of HTTP Request.
+   * @param res - Express model of HTTP Response.
+   * @param next - Express NextFunction used here for delegating errors.
+   */
+  listAchievements = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const userAchievements = await this.userService.getAchievementsForUser(userId);
+      res.json(userAchievements);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * 
    * Handles lesson finalization logic for user.
    * 
    * @param req - Express model of HTTP Request.

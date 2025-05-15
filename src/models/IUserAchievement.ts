@@ -10,3 +10,14 @@ export interface IUserAchievement {
     threshold: number;
     completed: boolean;
 }
+
+/**
+ * DTO model for json body of HTTP Response.
+ */
+export interface UserAchievementDto {
+    achievement_id: number;
+    name: string;
+    earned_at: Date | null;
+    completed: boolean;
+    progress: number;
+}

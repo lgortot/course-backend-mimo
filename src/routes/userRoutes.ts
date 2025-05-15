@@ -4,6 +4,7 @@ import { UserService } from "../services/UserService";
 import UserController from "../controllers/UserController";
 import { DrizzleLessonRepository } from "../repositories/DrizzleLessonRepository";
 import { IDataCache } from "../cache/IDataCache";
+import { DrizzleAchievementRepository } from "../repositories/DrizzleAchievementRepository";
 
 /**
  * Creates the router for User resource routes with the UserController to handle HTTP requests.
@@ -12,7 +13,8 @@ import { IDataCache } from "../cache/IDataCache";
 export default function createUsersRouter(cache: IDataCache): Router {
     const userRepo = new DrizzleUserRepository();
     const lessonRepo = new DrizzleLessonRepository();
-    const service = new UserService(userRepo, lessonRepo, cache);
+    const achievementRepo = new DrizzleAchievementRepository();
+    const service = new UserService(userRepo, lessonRepo, achievementRepo, cache);
     const controller = new UserController(service);
     const router = Router();
     
@@ -23,6 +25,7 @@ export default function createUsersRouter(cache: IDataCache): Router {
     router.put('/:id', controller.updateUser);
     router.delete('/:id', controller.deleteUser);
     router.post('/:id/finishLesson', controller.finishLesson);
+    router.get('/:id/achievements', controller.listAchievements);
 
     return router;
 }

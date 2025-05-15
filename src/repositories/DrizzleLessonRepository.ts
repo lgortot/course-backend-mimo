@@ -1,7 +1,21 @@
 import { ILessonRepository } from "./ILessonRepository";
-import { LessonRow, NewUserChapterRow, NewUserCourseRow, NewUserLessonRow, UserChapterRow, UserCourseRow, UserLessonRow } from "../db/dbTypes";
+import {
+  LessonRow,
+  NewUserChapterRow,
+  NewUserCourseRow,
+  NewUserLessonRow,
+  UserChapterRow,
+  UserCourseRow,
+  UserLessonRow,
+} from "../db/dbTypes";
 import { IUserLesson, IUserLessonWithCount } from "../models/IUserLesson";
-import { Chapter, Lesson, User_Chapter_Progress, User_Course_Progress, User_Lesson_Progress } from "../db/schemaTables";
+import {
+  Chapter,
+  Lesson,
+  User_Chapter_Progress,
+  User_Course_Progress,
+  User_Lesson_Progress,
+} from "../db/schemaTables";
 import { InternalServerError } from "../errors/ApiErrors";
 import { dbContext } from "../db/dbContext";
 import { ILesson } from "../models/ILesson";
@@ -70,7 +84,9 @@ export class DrizzleLessonRepository implements ILessonRepository {
           .get();
 
         return {
-          inserted: this.userLessontoDomain(insertedProgressRow as UserLessonRow),
+          inserted: this.userLessontoDomain(
+            insertedProgressRow as UserLessonRow
+          ),
           chapter_Id: relatedRowWithParentId.Chapter_ID,
           lessonCount: countResult?.totalForUser ?? 0,
         };
@@ -79,7 +95,9 @@ export class DrizzleLessonRepository implements ILessonRepository {
       return result;
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError(`Failed writing data to database. Info: ${error}`);
+      throw new InternalServerError(
+        `Failed writing data to database. Info: ${error}`
+      );
     }
   }
 
@@ -130,7 +148,9 @@ export class DrizzleLessonRepository implements ILessonRepository {
           .get();
 
         return {
-          inserted: this.userChaptertoDomain(insertedProgressRow as UserChapterRow),
+          inserted: this.userChaptertoDomain(
+            insertedProgressRow as UserChapterRow
+          ),
           course_id: relatedRowWithParentId.Course_ID,
           chapterCount: countResult?.totalForUser ?? 0,
         };
@@ -139,7 +159,9 @@ export class DrizzleLessonRepository implements ILessonRepository {
       return result;
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError(`Failed writing data to database. Info: ${error}`);
+      throw new InternalServerError(
+        `Failed writing data to database. Info: ${error}`
+      );
     }
   }
 
@@ -158,7 +180,49 @@ export class DrizzleLessonRepository implements ILessonRepository {
       return this.userCoursetoDomain(inserted);
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError(`Failed writing data to database. Info: ${error}`);
+      throw new InternalServerError(
+        `Failed writing data to database. Info: ${error}`
+      );
+    }
+  }
+
+  async getCompletedLessonsForUser(userId: number): Promise<number> {
+    try {
+      const result = await dbContext
+        .select({
+          count: sql<number>`COUNT(*)`.as("count"),
+        })
+        .from(User_Lesson_Progress)
+        .where(
+          sql`${User_Lesson_Progress.User_ID} = ${userId} AND ${User_Lesson_Progress.Completed_At} IS NOT NULL`
+        )
+        .get();
+
+      return result?.count ?? 0;
+    } catch (error) {
+      console.error("Error:", error);
+      throw new InternalServerError(
+        `Failed reading data from database. Info: ${error}`
+      );
+    }
+  }
+
+  async getCompletedChaptersForUser(userId: number): Promise<number> {
+    try {
+      const result = await dbContext
+        .select({
+          count: sql<number>`COUNT(*)`.as("count"),
+        })
+        .from(User_Chapter_Progress)
+        .where(sql`${User_Chapter_Progress.User_ID} = ${userId}`)
+        .get();
+
+      return result?.count ?? 0;
+    } catch (error) {
+      console.error("Error:", error);
+      throw new InternalServerError(
+        `Failed reading data from database. Info: ${error}`
+      );
     }
   }
 
@@ -171,7 +235,9 @@ export class DrizzleLessonRepository implements ILessonRepository {
       return rows[0] ? this.lessonToDomain(rows[0]) : null;
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError(`Failed reading data from database. Info: ${error}`);
+      throw new InternalServerError(
+        `Failed reading data from database. Info: ${error}`
+      );
     }
   }
 
@@ -188,7 +254,9 @@ export class DrizzleLessonRepository implements ILessonRepository {
       return chapterCounts.length > 0 ? chapterCounts : null;
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError(`Failed reading data from database. Info: ${error}`);
+      throw new InternalServerError(
+        `Failed reading data from database. Info: ${error}`
+      );
     }
   }
 
@@ -205,7 +273,9 @@ export class DrizzleLessonRepository implements ILessonRepository {
       return lessonCounts.length > 0 ? lessonCounts : null;
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError(`Failed reading data from database. Info: ${error}`);
+      throw new InternalServerError(
+        `Failed reading data from database. Info: ${error}`
+      );
     }
   }
 
@@ -246,7 +316,7 @@ export class DrizzleLessonRepository implements ILessonRepository {
    * @param row - Model of User-Chapter progress row data from database.
    * @returns IUserChapter domain model of User-Chapter progress row data from database.
    */
-   private userChaptertoDomain(row: UserChapterRow): IUserChapter {
+  private userChaptertoDomain(row: UserChapterRow): IUserChapter {
     return {
       user_id: row.User_ID,
       chapter_id: row.Chapter_ID,
@@ -259,7 +329,7 @@ export class DrizzleLessonRepository implements ILessonRepository {
    * @param row - Model of User-Course progress row data from database.
    * @returns IUserCourse domain model of User-Course progress row data from database.
    */
-   private userCoursetoDomain(row: UserCourseRow): IUserCourse {
+  private userCoursetoDomain(row: UserCourseRow): IUserCourse {
     return {
       user_id: row.User_ID,
       course_id: row.Course_ID,
