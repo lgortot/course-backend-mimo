@@ -11,5 +11,6 @@ export interface IUserChapter {
  export interface IUserChapterWithCount {
     inserted: IUserChapter,
     course_id: number,
-    chapterCount: number
+    chapterCount: number,
+    chapterCountOverall: number
   }

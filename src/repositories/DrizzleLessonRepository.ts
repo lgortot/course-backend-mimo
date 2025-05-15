@@ -73,14 +73,27 @@ export class DrizzleLessonRepository implements ILessonRepository {
         const countResult = tx
           .select({
             totalForUser: sql<number>`
-            COUNT(DISTINCT ${User_Lesson_Progress.Lesson_ID} || '-' || ${User_Lesson_Progress.User_ID})
-          `.as("totalForUser"),
+                          COUNT(DISTINCT
+                            CASE 
+                              WHEN ${User_Lesson_Progress.User_ID} = ${newUserLesson.User_ID} 
+                                  AND ${Lesson.Chapter_ID} = ${relatedRowWithParentId.Chapter_ID} 
+                              THEN ${User_Lesson_Progress.Lesson_ID} || '-' || ${User_Lesson_Progress.User_ID}
+                              ELSE NULL
+                            END
+                          )
+                        `.as("totalForUser"),
+            totalOverall: sql<number>`
+                        COUNT(DISTINCT
+                          CASE 
+                            WHEN ${User_Lesson_Progress.User_ID} = ${newUserLesson.User_ID} 
+                            THEN ${User_Lesson_Progress.Lesson_ID} || '-' || ${User_Lesson_Progress.User_ID}
+                            ELSE NULL
+                          END
+                        )
+                      `.as("totalOverall"),
           })
           .from(User_Lesson_Progress)
           .innerJoin(Lesson, eq(User_Lesson_Progress.Lesson_ID, Lesson.ID))
-          .where(
-            sql`${User_Lesson_Progress.User_ID} = ${newUserLesson.User_ID} AND ${Lesson.Chapter_ID} = ${relatedRowWithParentId.Chapter_ID}`
-          )
           .get();
 
         return {
@@ -89,6 +102,7 @@ export class DrizzleLessonRepository implements ILessonRepository {
           ),
           chapter_Id: relatedRowWithParentId.Chapter_ID,
           lessonCount: countResult?.totalForUser ?? 0,
+          lessonCountOverall: countResult?.totalOverall ?? 0,
         };
       });
 
@@ -137,14 +151,27 @@ export class DrizzleLessonRepository implements ILessonRepository {
         const countResult = tx
           .select({
             totalForUser: sql<number>`
-            COUNT(*)
-          `.as("totalForUser"),
+                          COUNT(
+                            CASE
+                              WHEN ${User_Chapter_Progress.User_ID} = ${newUserChapter.User_ID}
+                                AND ${Chapter.Course_ID} = ${relatedRowWithParentId.Course_ID}
+                              THEN 1
+                              ELSE NULL
+                            END
+                          )
+                        `.as("totalForUser"),
+            totalOverall: sql<number>`
+                          COUNT(
+                            CASE
+                              WHEN ${User_Chapter_Progress.User_ID} = ${newUserChapter.User_ID}
+                              THEN 1
+                              ELSE NULL
+                            END
+                          )
+                        `.as("totalOverall"),
           })
           .from(User_Chapter_Progress)
           .innerJoin(Chapter, eq(User_Chapter_Progress.Chapter_ID, Chapter.ID))
-          .where(
-            sql`${User_Chapter_Progress.User_ID} = ${newUserChapter.User_ID} AND ${Chapter.Course_ID} = ${relatedRowWithParentId.Course_ID}`
-          )
           .get();
 
         return {
@@ -153,6 +180,7 @@ export class DrizzleLessonRepository implements ILessonRepository {
           ),
           course_id: relatedRowWithParentId.Course_ID,
           chapterCount: countResult?.totalForUser ?? 0,
+          chapterCountOverall: countResult?.totalOverall ?? 0
         };
       });
 

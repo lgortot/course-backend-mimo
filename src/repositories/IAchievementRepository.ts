@@ -19,4 +19,13 @@ export interface IAchievementRepository {
    *
    */
   getAllAchievements(): Promise<IAchievement[] | null>;
+
+  /**
+   * Adds a User-Achievement record to indicate user has completed an achievement.
+   * Has no return type because we don't need to return to API client.
+   * 
+   * @param userId - user to register achievement for.
+   * @param achievementId - achievement to assign to user.
+   */
+  createUserAchievement(userId: number, achievementId: number): Promise<void>
 }

@@ -17,7 +17,8 @@ export interface IUserLesson {
 export interface IUserLessonWithCount {
   inserted: IUserLesson,
   chapter_Id: number,
-  lessonCount: number
+  lessonCount: number,
+  lessonCountOverall: number
 }
 
 /**

@@ -5,6 +5,7 @@ import { DrizzleLessonRepository } from "../repositories/DrizzleLessonRepository
 import errorHandlerMiddleware from "../middleware/errorHandlerMiddleware";
 import createUsersRouter from "../routes/userRoutes";
 import { sqlite } from "../db/dbContext";
+import { DrizzleAchievementRepository } from "../repositories/DrizzleAchievementRepository";
 
 /**
  * Represents the core HTTP server application.
@@ -52,7 +53,8 @@ export default class Server {
    */
   private async setupDataCache(): Promise<IDataCache> {
     const lessonRepo = new DrizzleLessonRepository(); // good case for a DI container like InversifyJS since we use this across different places in app
-    const cache = new InMemoryDataCache(lessonRepo);
+    const achievementRepo = new DrizzleAchievementRepository();
+    const cache = new InMemoryDataCache(lessonRepo, achievementRepo);
     await cache.initializeCache();
     return cache;
   }

@@ -50,10 +50,6 @@ export type UserCourseRow = InferSelectModel<typeof User_Course_Progress>;
  */
 export type NewUserAchievementRow = InferInsertModel<typeof User_Achievement>;
 /**
- * Drizzle User_Achievement data model for SELECT operations.
- */
-export type UserAchievementRow = InferSelectModel<typeof User_Achievement>;
-/**
  * Drizzle Achievement data model for INSERT operations.
  */
 export type NewAchievementRow = InferInsertModel<typeof Achievement>;

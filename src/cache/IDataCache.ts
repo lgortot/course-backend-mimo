@@ -1,3 +1,5 @@
+import { IAchievement } from "../models/IAchievement";
+
 /**
  * Represents an abstract data cache interface.
  */
@@ -26,6 +28,17 @@ export interface IDataCache {
    * @param count - Count of lessons for chapterId.
    */
   setLessonCountForChapter(chapterId: number, count: number): void;
+  /**
+   * Gets the cached achievement of requested type and threshold.
+   * @param type - Type of requested achievements.
+   * @param threshold - Threshold of achievement objectives.
+   */
+  getAchievementByTypeAndThreshold(type: string, threshold: number): IAchievement | undefined;
+  /**
+   * Gets the cached achievement for requested course.
+   * @param courseId - Type of requested achievements.
+   */
+   getAchievementByCourseId(courseId: number): IAchievement | undefined;
   /**
    * Runs cache initialization logic.
    */

@@ -87,13 +87,19 @@ export class UserService {
       inserted: insertedUserLessonProgress,
       chapter_Id,
       lessonCount,
+      lessonCountOverall,
     } = await this.lessonRepository.createUserLessonProgress(userLessonModel);
 
     console.log(
       `User ${userId} has now completed ${lessonCount} lessons under chapter ${chapter_Id}.`
     );
 
-    await this.evaluateCourseCompletion(userId, chapter_Id, lessonCount);
+    await this.evaluateCourseCompletion(
+      userId,
+      chapter_Id,
+      lessonCount,
+      lessonCountOverall
+    );
 
     return insertedUserLessonProgress;
   }
@@ -205,40 +211,68 @@ export class UserService {
    * @param user_id - The ID of the user.
    * @param chapter_id - The ID of the completed chapter.
    * @param lessonCount - The number of lessons completed under this chapter.
+   * @param lessonCountOverall - Total number of lessons user has completed overall.
    */
   private async evaluateCourseCompletion(
     user_id: number,
     chapter_id: number,
-    lessonCount: number
+    lessonCount: number,
+    lessonCountOverall: number
   ): Promise<void> {
+    // Insert lesson-type achievement if accomplished
+    const lessonAchievement = this.cache.getAchievementByTypeAndThreshold(
+      "lesson",
+      lessonCountOverall
+    );
+    if (lessonAchievement)
+      await this.achievementRepository.createUserAchievement(
+        user_id,
+        lessonAchievement.ID
+      );
+    // Short-circuit if user has not completed chapter
     const totalLessonsCount = this.cache.getLessonCountForChapter(chapter_id);
-
     if (totalLessonsCount != lessonCount) return;
 
+    // Insert chapter progress for user
     const userChapterModel: IUserChapter = {
       chapter_id: chapter_id,
       user_id: user_id,
     };
-
-    const { course_id, chapterCount } =
+    const { course_id, chapterCount, chapterCountOverall } =
       await this.lessonRepository.createUserChapterProgress(userChapterModel);
 
-    const totalChaptersCount = this.cache.getChapterCountForCourse(course_id);
+    // Insert chapter-type achievement if accomplished
+    const chapterAchievement = this.cache.getAchievementByTypeAndThreshold(
+      "chapter",
+      chapterCountOverall
+    );
+    if (chapterAchievement)
+      await this.achievementRepository.createUserAchievement(
+        user_id,
+        chapterAchievement.ID
+      );
 
+    // Short-circuit if user has not completed course
+    const totalChaptersCount = this.cache.getChapterCountForCourse(course_id);
     console.log(
       `User ${user_id} has now completed ${chapterCount} chapters under course ${course_id}.`
     );
-
     if (totalChaptersCount != chapterCount) return;
 
+    // Insert course progress for user
     const userCourseModel: IUserCourse = {
       course_id: course_id,
       user_id: user_id,
     };
-
     await this.lessonRepository.createUserCourseProgress(userCourseModel);
-
     console.log(`User ${user_id} has now completed course ${course_id}.`);
+    // Insert course achievement
+    const courseAchievement = this.cache.getAchievementByCourseId(course_id);
+    if (courseAchievement)
+      await this.achievementRepository.createUserAchievement(
+        user_id,
+        courseAchievement.ID
+      );
   }
 
   /**

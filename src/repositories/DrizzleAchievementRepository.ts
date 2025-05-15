@@ -4,10 +4,28 @@ import { IAchievement } from "../models/IAchievement";
 import { IUserAchievement } from "../models/IUserAchievement";
 import { IAchievementRepository } from "./IAchievementRepository";
 import { InternalServerError } from "../errors/ApiErrors";
-import { AchievementRow, UserAchievementRow } from "../db/dbTypes";
+import { AchievementRow, NewUserAchievementRow } from "../db/dbTypes";
 import { eq, and } from "drizzle-orm";
 
 export class DrizzleAchievementRepository implements IAchievementRepository {
+
+  async createUserAchievement(userId: number, achievementId: number): Promise<void> {
+    const newUserAchievement: NewUserAchievementRow = {
+      Achievement_ID: achievementId,
+      User_ID: userId,
+      Earned_At: new Date()
+    };
+    try {
+        await dbContext
+        .insert(User_Achievement)
+        .values(newUserAchievement);
+        console.log(`User ${userId} unlocked achievement ${achievementId} !`);
+    } catch (error) {
+      console.error("Error:", error);
+      throw new InternalServerError(`Failed writing data to database. Info: ${error}`);
+    }
+  }
+
   async getAllAchievements(): Promise<IAchievement[] | null> {
     try {
       const rows = await dbContext.select().from(Achievement);
