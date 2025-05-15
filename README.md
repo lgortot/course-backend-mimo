@@ -18,6 +18,8 @@ _**Note:** If app was started and closed, run it again with `npm run dev` to avo
 
 `npm run dev` starts up the express server on port 3000 by default, in hot-reload mode with a served .env file.
 
+`npm run test` script runs the Jest test runner executing tests.
+
 ## Testing Data
 The database is seeded with testing data and on startup it contains three users and three courses: Swift, Javascript, C#.
 
