@@ -79,7 +79,7 @@ export class DrizzleLessonRepository implements ILessonRepository {
       return result;
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError("Failed to connect to database.");
+      throw new InternalServerError(`Failed writing data to database. Info: ${error}`);
     }
   }
 
@@ -139,7 +139,7 @@ export class DrizzleLessonRepository implements ILessonRepository {
       return result;
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError("Failed to connect to database.");
+      throw new InternalServerError(`Failed writing data to database. Info: ${error}`);
     }
   }
 
@@ -158,7 +158,7 @@ export class DrizzleLessonRepository implements ILessonRepository {
       return this.userCoursetoDomain(inserted);
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError("Failed to connect to database.");
+      throw new InternalServerError(`Failed writing data to database. Info: ${error}`);
     }
   }
 
@@ -171,7 +171,7 @@ export class DrizzleLessonRepository implements ILessonRepository {
       return rows[0] ? this.lessonToDomain(rows[0]) : null;
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError("Failed to connect to database.");
+      throw new InternalServerError(`Failed reading data from database. Info: ${error}`);
     }
   }
 
@@ -188,7 +188,7 @@ export class DrizzleLessonRepository implements ILessonRepository {
       return chapterCounts.length > 0 ? chapterCounts : null;
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError("Failed to connect to database.");
+      throw new InternalServerError(`Failed reading data from database. Info: ${error}`);
     }
   }
 
@@ -205,7 +205,7 @@ export class DrizzleLessonRepository implements ILessonRepository {
       return lessonCounts.length > 0 ? lessonCounts : null;
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError("Failed to connect to database.");
+      throw new InternalServerError(`Failed reading data from database. Info: ${error}`);
     }
   }
 

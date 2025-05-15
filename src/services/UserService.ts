@@ -3,6 +3,9 @@ import { NotFoundError } from "../errors/ApiErrors";
 import { IUser, UserUpsertDto } from "../models/IUser";
 import { IUserRepository } from "../repositories/IUserRepository";
 import { IUserLesson, UserLessonUpsertDto } from "../models/IUserLesson";
+import { IDataCache } from "../cache/IDataCache";
+import { IUserChapter } from "../models/IUserChapter";
+import { IUserCourse } from "../models/IUserCourse";
 
 /**
  * Service layer for handling business logic related to User resource operations.
@@ -11,7 +14,8 @@ import { IUserLesson, UserLessonUpsertDto } from "../models/IUserLesson";
 export class UserService {
   constructor(
     private readonly userRepository: IUserRepository,
-    private readonly lessonRepository: ILessonRepository
+    private readonly lessonRepository: ILessonRepository,
+    private readonly cache: IDataCache
   ) {}
 
   /**
@@ -27,16 +31,8 @@ export class UserService {
     userId: number,
     userLesson: UserLessonUpsertDto
   ): Promise<IUserLesson> {
-    const user = await this.userRepository.getById(userId);
-    if (!user) {
-      throw new NotFoundError(`User with ID ${userId} not found.`);
-    }
-    const lesson = await this.lessonRepository.getById(userLesson.lesson_id);
-    if (!lesson) {
-      throw new NotFoundError(
-        `Lesson with ID ${userLesson.lesson_id} not found.`
-      );
-    }
+    await this.validateUserAndLessonExistence(userId, userLesson.lesson_id);
+
     const userLessonModel: IUserLesson = {
       id: undefined,
       lesson_id: userLesson.lesson_id,
@@ -45,12 +41,19 @@ export class UserService {
       Completed_At: userLesson.completed_at,
     };
 
-    const { inserted, chapter_Id, lessonCount } =
-      await this.lessonRepository.createUserLessonProgress(userLessonModel);
+    const {
+      inserted: insertedUserLessonProgress,
+      chapter_Id,
+      lessonCount,
+    } = await this.lessonRepository.createUserLessonProgress(userLessonModel);
 
-    console.log(`User ${userId} has now completed ${lessonCount} lessons under chapter ${chapter_Id}.`);
+    console.log(
+      `User ${userId} has now completed ${lessonCount} lessons under chapter ${chapter_Id}.`
+    );
 
-    return inserted;
+    await this.evaluateCourseCompletion(userId, chapter_Id, lessonCount);
+
+    return insertedUserLessonProgress;
   }
 
   /**
@@ -130,5 +133,69 @@ export class UserService {
         `User with ID ${id} could not be deleted because it does not exist.`
       );
     }
+  }
+
+  /**
+   * Validates that the user and lesson data exists.
+   *
+   * @param userId - ID of the user.
+   * @param lessonId - ID of the lesson.
+   * @throws NotFoundError if either the user or lesson does not exist.
+   */
+  private async validateUserAndLessonExistence(
+    userId: number,
+    lessonId: number
+  ): Promise<void> {
+    const user = await this.userRepository.getById(userId);
+    if (!user) {
+      throw new NotFoundError(`User with ID ${userId} not found.`);
+    }
+    const lesson = await this.lessonRepository.getById(lessonId);
+    if (!lesson) {
+      throw new NotFoundError(`Lesson with ID ${lessonId} not found.`);
+    }
+  }
+
+  /**
+   * Evaluates whether a chapter or course should be marked as completed for a user,
+   * based on chapter and lesson progress.
+   *
+   * @param user_id - The ID of the user.
+   * @param chapter_id - The ID of the completed chapter.
+   * @param lessonCount - The number of lessons completed under this chapter.
+   */
+  private async evaluateCourseCompletion(
+    user_id: number,
+    chapter_id: number,
+    lessonCount: number
+  ): Promise<void> {
+    const totalLessonsCount = this.cache.getLessonCountForChapter(chapter_id);
+    
+    if (totalLessonsCount != lessonCount) return;
+
+    const userChapterModel: IUserChapter = {
+      chapter_id: chapter_id,
+      user_id: user_id,
+    };
+
+    const { course_id, chapterCount } =
+      await this.lessonRepository.createUserChapterProgress(userChapterModel);
+
+    const totalChaptersCount = this.cache.getChapterCountForCourse(course_id);
+
+    console.log(
+      `User ${user_id} has now completed ${chapterCount} chapters under course ${course_id}.`
+    );
+
+    if (totalChaptersCount != chapterCount) return;
+
+    const userCourseModel: IUserCourse = {
+      course_id: course_id,
+      user_id: user_id,
+    };
+
+    await this.lessonRepository.createUserCourseProgress(userCourseModel);
+
+    console.log(`User ${user_id} has now completed course ${course_id}.`);
   }
 }

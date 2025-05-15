@@ -16,7 +16,7 @@ export class DrizzleUserRepository implements IUserRepository {
       return rows.map(this.toDomain);
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError("Failed to connect to database.");
+      throw new InternalServerError(`Failed reading data from database. Info: ${error}`);
     }
   }
 
@@ -26,7 +26,7 @@ export class DrizzleUserRepository implements IUserRepository {
       return rows[0] ? this.toDomain(rows[0]) : null;
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError("Failed to connect to database.");
+      throw new InternalServerError(`Failed reading data from database. Info: ${error}`);
     }
   }
 
@@ -43,7 +43,7 @@ export class DrizzleUserRepository implements IUserRepository {
       return this.toDomain(inserted);
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError("Failed to connect to database.");
+      throw new InternalServerError(`Failed writing data to database. Info: ${error}`);
     }
   }
 
@@ -61,7 +61,7 @@ export class DrizzleUserRepository implements IUserRepository {
       return updated ? this.toDomain(updated) : null;
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError("Failed to connect to database.");
+      throw new InternalServerError(`Failed updating data in database. Info: ${error}`);
     }
   }
 
@@ -71,7 +71,7 @@ export class DrizzleUserRepository implements IUserRepository {
       return deleted.changes > 0;
     } catch (error) {
       console.error("Error:", error);
-      throw new InternalServerError("Failed to connect to database.");
+      throw new InternalServerError(`Failed deleting data from database. Info: ${error}`);
     }
   }
 

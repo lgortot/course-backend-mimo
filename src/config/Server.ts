@@ -36,11 +36,8 @@ export default class Server {
   /**
    * Configures server routes.
    */
-  private setupRoutes(): void {
-    this.app.use("/users", createUsersRouter());
-    this.app.get("/", (req, res) => {
-      res.send("Hello world!");
-    });
+  private setupRoutes(cache: IDataCache): void {
+    this.app.use("/users", createUsersRouter(cache));
   }
 
   /**
@@ -67,7 +64,7 @@ export default class Server {
     try {
       const cache = await this.setupDataCache();
       this.setupMiddleware();
-      this.setupRoutes();
+      this.setupRoutes(cache);
       this.setupErrorHandlerMiddleware();
       this.app.listen(this.port, () => {
         console.log(`Server is running on port ${this.port}`);
