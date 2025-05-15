@@ -1,5 +1,5 @@
 import { dbContext } from './dbContext';
-import { Course, Chapter, Lesson, User, Achievement, User_Lesson_Progress, User_Achievement } from './schemaTables';
+import { Course, Chapter, Lesson, User, Achievement, User_Lesson_Progress, User_Achievement, User_Chapter_Progress, User_Course_Progress } from './schemaTables';
 
 async function seed() {
   try {
@@ -138,6 +138,22 @@ async function seed() {
             dbContext.insert(User_Lesson_Progress).values(progress)
         )
     );
+
+    const user3ChapterProgress = [1, 2, 3, 4].map(chapterId => ({
+      User_ID: insertedUsers[2],
+      Chapter_ID: chapterId,
+    }));
+    await Promise.all(
+      user3ChapterProgress.map(progress =>
+        dbContext.insert(User_Chapter_Progress).values(progress)
+      )
+    );
+
+    const user3CourseProgress = {
+      User_ID: insertedUsers[2],
+      Course_ID: insertedCourses[0],
+    };
+    await dbContext.insert(User_Course_Progress).values(user3CourseProgress);
 
     // User 2 has 2/3 lessons from chapter 1 javascript and 1/2 lesson from chapter 1 c#
     // Tip: Setup for testing across different course chapters
